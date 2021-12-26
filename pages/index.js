@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
 import tw from 'tailwind-styled-components';
-// import { usersRepo } from '../helper/user-repo';
-import users from '../data/users.json';
 
 export default function Home() {
   const [hasTruecaller, setHasTruecaller] = useState(undefined);
@@ -33,6 +31,7 @@ export default function Home() {
 
   const checkFile = () => {
     if (hasTruecaller) {
+      const users = require('../data/users.json');
       const currentUser = users.find(
         (x) => x.requestId.toString() === requestId.toString()
       );
@@ -96,11 +95,10 @@ export default function Home() {
       </Container>
       <Container>
         {hasTruecaller ? (
-          <p>
-            present
-            <Button onClick={() => callApi()}>Check your details</Button>
-            {userData ? JSON.stringify(userData) : null}
-          </p>
+          <>
+            <p>{userData ? JSON.stringify(userData) : 'Getting Data...'}</p>
+            <Button onClick={() => checkFile()}>Check your details</Button>
+          </>
         ) : null}
       </Container>
     </Wrapper>
