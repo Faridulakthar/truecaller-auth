@@ -32,21 +32,42 @@ export default function Home() {
   const checkFile = () => {
     if (hasTruecaller) {
       const users = require('../data/users.json');
+      alert(JSON.stringify(users));
       const currentUser = users.find(
         (x) => x.requestId.toString() === requestId.toString()
       );
-      alert(currentUser ? 'USER FOUND' : 'NAHI BETA');
-      console.log(currentUser);
-      if (!currentUser) {
-        return;
+      alert(currentUser.length ? 'USER FOUND' : 'NAHI BETA');
+      if (currentUser.length) {
+        getUserData(currentUser.accessToken, currentUser.endpoint);
       }
-      getUserData(currentUser.accessToken, currentUser.endpoint);
-      return;
+
       // const res = usersRepo.getById(requestId);
       // if (!res) {
       //   return;
       // }
       // getUserData(res.accessToken, res.endpoint);
+    }
+  };
+
+  const checkDetails = async () => {
+    const res = await fetch(
+      'https://truecaller-auth-1akdes5ek-faridulakthar.vercel.app/api/checkUser',
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Headers': '*',
+          'Access-Control-Allow-Methods': '*',
+        },
+        body: JSON.stringify({
+          requestId,
+        }),
+      }
+    );
+    const data = await res.json();
+    if (data?.url) {
+      getUserData(data.url, data.token);
     }
   };
 
@@ -96,8 +117,13 @@ export default function Home() {
       <Container>
         {hasTruecaller ? (
           <>
-            <p>{userData ? JSON.stringify(userData) : 'Getting Data...'}</p>
-            <Button onClick={() => checkFile()}>Check your details</Button>
+            <p>
+              {userData?.requestId
+                ? JSON.stringify(userData)
+                : 'Getting Data...'}
+            </p>
+            <Button onClick={() => checkFile()}>Check file</Button>
+            <Button onClick={() => checkDetails()}>Check your details</Button>
           </>
         ) : null}
       </Container>
