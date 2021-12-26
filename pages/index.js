@@ -66,6 +66,7 @@ export default function Home() {
       }
     );
     const data = await res.json();
+    alert(JSON.stringify(data));
     if (data?.url) {
       getUserData(data.url, data.token);
     }
