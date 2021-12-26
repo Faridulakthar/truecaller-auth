@@ -33,7 +33,7 @@ export default function Home() {
     if (hasTruecaller) {
       const users = require('../data/users.json');
       alert(JSON.stringify(users));
-      const currentUser = users.find(
+      const currentUser = users.filter(
         (x) => x.requestId.toString() === requestId.toString()
       );
       alert(currentUser.length ? 'USER FOUND' : 'NAHI BETA');
@@ -50,22 +50,20 @@ export default function Home() {
   };
 
   const checkDetails = async () => {
-    const res = await fetch(
-      'https://truecaller-auth-1akdes5ek-faridulakthar.vercel.app/api/checkUser',
-      {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Headers': '*',
-          'Access-Control-Allow-Methods': '*',
-        },
-        body: JSON.stringify({
-          requestId,
-        }),
-      }
-    );
+    const res = await fetch('/api/checkUser', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Headers': '*',
+        'Access-Control-Allow-Methods': '*',
+      },
+      body: JSON.stringify({
+        requestId,
+      }),
+    });
     const data = await res.json();
+    console.log(data, 'data');
     alert(JSON.stringify(data));
     if (data?.url) {
       getUserData(data.url, data.token);
