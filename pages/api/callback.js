@@ -1,3 +1,6 @@
+const fs = require('fs');
+const path = require('path');
+
 export default function handler(req, res) {
   if (!req.body) {
     res.status(403).json({ error: 'body is missing' });
