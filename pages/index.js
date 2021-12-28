@@ -36,7 +36,7 @@ export default function Home() {
       const currentUser = users.filter(
         (x) => x.requestId.toString() === requestId.toString()
       );
-      alert(currentUser.length ? 'USER FOUND' : 'NAHI BETA');
+      alert(currentUser.length ? 'USER FOUND' : 'NOT FOUND');
       if (currentUser.length) {
         getUserData(currentUser.accessToken, currentUser.endpoint);
       }
