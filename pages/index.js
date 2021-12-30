@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import tw from 'tailwind-styled-components';
+import axios from 'axios';
 
 export default function Home() {
   const [hasTruecaller, setHasTruecaller] = useState(undefined);
@@ -9,8 +10,8 @@ export default function Home() {
   const url = `truecallersdk://truesdk/web_verify?requestNonce=${requestId}&partnerKey=mcfZSc5418a92840940c288d249d0fe915435&partnerName=Truecaller-auth&lang=en&title=Fieldproxy`;
 
   function randomInt() {
-    const max = 999999;
-    const min = 0;
+    const max = 111111111111;
+    const min = 11111111;
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
 
@@ -20,33 +21,10 @@ export default function Home() {
     setTimeout(function () {
       if (document.hasFocus()) {
         setHasTruecaller(false);
-        setTimeout(() => {
-          checkFile();
-        }, 3000);
       } else {
         setHasTruecaller(true);
       }
     }, 600);
-  };
-
-  const checkFile = () => {
-    if (hasTruecaller) {
-      const users = require('../data/users.json');
-      alert(JSON.stringify(users));
-      const currentUser = users.filter(
-        (x) => x.requestId.toString() === requestId.toString()
-      );
-      alert(currentUser.length ? 'USER FOUND' : 'NOT FOUND');
-      if (currentUser.length) {
-        getUserData(currentUser.accessToken, currentUser.endpoint);
-      }
-
-      // const res = usersRepo.getById(requestId);
-      // if (!res) {
-      //   return;
-      // }
-      // getUserData(res.accessToken, res.endpoint);
-    }
   };
 
   const checkDetails = async () => {
@@ -62,47 +40,9 @@ export default function Home() {
         requestId,
       }),
     });
-    const data = await res.json();
-    console.log(data, 'data');
-    alert(JSON.stringify(data));
-    if (data?.url) {
-      getUserData(data.url, data.token);
-    }
-  };
 
-  const getUserData = async (url, token) => {
-    const res = await fetch(url, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Headers': '*',
-        'Access-Control-Allow-Methods': '*',
-      },
-    });
     const data = await res.json();
     setUserData(data);
-  };
-
-  // Truecaller
-  const callApi = async () => {
-    const res = await fetch(`http://192.168.0.103:3000/api/callback`, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Headers': '*',
-        'Access-Control-Allow-Methods': '*',
-      },
-      body: JSON.stringify({
-        requestId: requestId,
-        accessToken: 'a1asX--8_yw-OF--E6Gj_DPyKelJIGUUeYB9U9MJhyeu4hOCbrl',
-        endpoint: 'https://profile4-noneu.truecaller.com/v1/default',
-      }),
-    });
-    const data = await res.json();
-    console.log(data);
   };
 
   return (
@@ -111,18 +51,35 @@ export default function Home() {
         <Title>Fieldproxy Task</Title>
         <SubTitle>To get started send a verify request.</SubTitle>
         <Button onClick={() => signUp()}>Send Verification</Button>
-        {/* <Button onClick={() => callApi()}>API call</Button> */}
       </Container>
       <Container>
+        <br />
         {hasTruecaller ? (
           <>
-            <p>
-              {userData?.requestId
-                ? JSON.stringify(userData)
-                : 'Getting Data...'}
-            </p>
-            <Button onClick={() => checkFile()}>Check file</Button>
-            <Button onClick={() => checkDetails()}>Check your details</Button>
+            {userData?.id ? null : (
+              <Button onClick={() => checkDetails()}>Check your details</Button>
+            )}
+            <br />
+            {userData?.id ? (
+              <table>
+                <tr>
+                  <th>Item</th>
+                  <th>Value</th>
+                </tr>
+                <tr>
+                  <td>Name</td>
+                  <td>{userData.name.first + userData.name.last}</td>
+                </tr>
+                <tr>
+                  <td>Email</td>
+                  <td>{userData.onlineIdentities.email}</td>
+                </tr>
+                <tr>
+                  <td>Phone</td>
+                  <td>{userData.phoneNumbers[0]}</td>
+                </tr>
+              </table>
+            ) : null}
           </>
         ) : null}
       </Container>
